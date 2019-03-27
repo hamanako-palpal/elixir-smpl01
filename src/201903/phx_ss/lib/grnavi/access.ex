@@ -22,7 +22,14 @@ defmodule Grnavi.Access do
 
   def getText([head | tail], list) do
     %{"name" => x} = head
-    ret = [%{"name" => x}] ++ list
+    ret = [{:name, x}] ++ list
     getText(tail, ret)
+  end
+
+  def getDecodes(item) do
+    case item do
+      {:ok, rtn} -> rtn
+      {_, _} -> "error"
+    end
   end
 end
