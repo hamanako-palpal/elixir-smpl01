@@ -20,12 +20,14 @@ import "phoenix_html"
 
 // import socket from "./socket"
 const elmDiv = document.querySelector("#elm-container")
-var el = document.getElementById("elm-container")
-var lists = elmDiv.getAttribute("items").split('o')
-console.log( lists)
-lists.forEach(function( value ) {
-    console.log( value );
-});
+// var el = document.getElementById("elm-container")
+console.log(elmDiv)
+
+var lists = elmDiv.getAttribute("items")
+console.log( JSON.parse(lists))
+//lists.forEach(function( value ) {
+//    console.log( value );
+//});
 
 
 const elmApp = Elm.Main.init

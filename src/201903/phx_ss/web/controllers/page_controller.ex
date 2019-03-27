@@ -4,7 +4,9 @@ defmodule PhxSs.PageController do
   def index(conn, _params) do
 
     items = Grnavi.Access.makeText
-    |> Poison.encode!
+      |> JSX.encode
+      |> Grnavi.Access.getDecodes
+
     render conn, "index.html", items: items
   end
 end
