@@ -2,7 +2,7 @@ defmodule Grnavi.Access do
   def makeText do
     url = "https://api.gnavi.co.jp/RestSearchAPI/v3/"
 
-    prm = [keyid: "f6313561ae7bbcbd7c8c3df035c4317b", freeword: "寺"]
+    prm = [keyid: "f6313561ae7bbcbd7c8c3df035c4317b", freeword: "釈迦", hit_per_page: "3"]
     HTTPoison.get!(url, [], params: prm)
     |> getBody
     |> Poison.decode!

@@ -11,12 +11,19 @@ defmodule PhxSs.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug CORSPlug
   end
 
   scope "/", PhxSs do
-    pipe_through :api # Use the default browser stack
+    pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+  end
+
+  scope "update", PhxSs do
+    pipe_through :api # Use the default browser stack
+
+    get "/",  PageController, :update
   end
 
   # Other scopes may use custom stacks.
