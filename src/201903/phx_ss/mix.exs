@@ -40,7 +40,8 @@ defmodule PhxSs.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:httpoison, "~> 0.13"},
-     {:exjsx, "~> 4.0.0"}
+     {:exjsx, "~> 4.0.0"},
+     {:cors_plug, "~> 1.2"}
     ]
 
   end

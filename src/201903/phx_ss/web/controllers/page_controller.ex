@@ -4,11 +4,16 @@ defmodule PhxSs.PageController do
   def index(conn, _params) do
 
     items = Grnavi.Access.makeText
-      #|> JSX.encode
-      #|> Grnavi.Access.getDecodes
+      |> JSX.encode
+      |> Grnavi.Access.getDecodes
 
-      #send_resp(conn, 200, items)
-    #render conn, "index.html", items: items
+    render conn, "index.html", items: items
+  end
+
+  def update(conn, _params) do
+
+    items = Grnavi.Access.makeText
+
     json conn, items
   end
 end

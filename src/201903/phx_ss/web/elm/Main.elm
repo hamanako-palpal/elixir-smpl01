@@ -5,9 +5,16 @@ import Html exposing(..)
 import Html.Events exposing(..)
 import Http
 import Json.Decode as Decode
+import Dict
 
+main : Program () Model Msg
 main =
-  Browser.sandbox { init = init, update = update, view = view }
+  Browser.element
+     { init = init
+     , update = update
+     , view = view
+     , subscriptions = \_ -> Sub.none
+     }
 
 type alias Model = 
   {datas : List Shop
@@ -16,24 +23,32 @@ type alias Model =
 
 type alias Shop = {shop : String}
 
-init : ( Model, Cmd Msg )
-init = (Model [Shop "koma"] "", Cmd.none)
+init : () -> ( Model, Cmd Msg )
+init _ = (Model [Shop "ShowList"] "", Cmd.none)
 
 type Msg
   = Editor String
   | GetShops
   | NewShops(Result Http.Error (List Shop))
 
-update : Msg -> (Model, Cmd Msg) -> (Model, Cmd Msg)
-update msg (model,_) = 
+update : Msg -> Model -> (Model, Cmd Msg)
+update msg model =
       case msg of
         GetShops -> (model, getShops)
-        NewShops(Ok shops) -> (Model shops "ok", Cmd.none)
-        NewShops(Err _) -> ({model | datas = [Shop "unti"]}, Cmd.none)
+        NewShops res ->
+          case res of
+            Ok shops ->
+              ({model | datas = shops}, Cmd.none)
+            Err reason ->
+              ({model | datas = [Shop (httpErrorToString reason)]}, Cmd.none)
         Editor txt -> ({model | edit = txt}, Cmd.none)
 
-view : (Model, Cmd Msg) -> Html Msg
-view (mdl, _) = div []
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
+
+view : Model -> Html Msg
+view mdl = div []
   [ input [onInput Editor] []
   , button [onClick (GetShops)] [text "go"]
   , showList mdl
@@ -41,34 +56,57 @@ view (mdl, _) = div []
 
 showList : Model -> Html msg
 showList model = table []
-                      ([thead[]
+                      [thead[]
                         [th [][text "colume"]
                         ,th [][text model.edit]
                         ]
+                      ,tbody[] <| List.map toLi model.datas
                       ]
-                        ++ List.map toLi model.datas
-                      )
 
 toLi : Shop -> Html msg
-toLi txt = tr [] 
+toLi txt = Debug.log txt.shop
+              tr []
                 [td [][text <| txt.shop]
                 ,td [][text <| String.fromInt 100]
                 ]
 
 getShops : Cmd Msg
-getShops = 
-  Http.send NewShops requestShops
+getShops =
+    Http.request
+      { method = "GET"
+        , headers =
+            [ Http.header "Accept" "application/json"
+            , Http.header "Content-Type" "application/json"
+            ]
+      , url = "http://localhost:4000/update"
+      , expect = Http.expectJson NewShops(decoders)
+      , body = Http.emptyBody
+      , timeout = Nothing
+      , tracker = Nothing 
+      }
 
-requestShops : Http.Request (List Shop)
-requestShops = 
-    let
-        url = "http://localhost:4000"
-    in
-      Debug.log "url"
-      Http.get url (Decode.field "name"(Decode.list(Decode.map Shop Decode.string)))
+decoders : Decode.Decoder (List Shop)
+decoders =
+  Decode.list decoder
 
-logRequest : Http.Request (List Shop) -> Http.Request (List Shop)
-logRequest req = 
-            case req of
-              {Ok shops} -> List.Map Debug.log (shops)
-              {Err shops} -> List.Map Debug.log (shops)    
+decoder : Decode.Decoder (Shop)
+decoder =
+  Decode.map Shop(Decode.field "name" Decode.string)
+
+httpErrorToString : Http.Error -> String
+httpErrorToString err =
+    case err of
+        Http.BadUrl _ ->
+            "BadUrl"
+
+        Http.Timeout ->
+            "Timeout"
+
+        Http.NetworkError ->
+            "NetworkError"
+
+        Http.BadStatus _ ->
+            "BadStatus"
+
+        Http.BadBody s ->
+            "BadBody: " ++ s

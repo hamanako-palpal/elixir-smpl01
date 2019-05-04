@@ -38,5 +38,8 @@ defmodule PhxSs.Endpoint do
     key: "_phx_ss_key",
     signing_salt: "8nJzwNRb"
 
+
+  plug CORSPlug
+
   plug PhxSs.Router
 end

@@ -19,12 +19,13 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from "./socket"
+
 const elmDiv = document.querySelector("#elm-container")
 // var el = document.getElementById("elm-container")
 console.log(elmDiv)
 
-var lists = elmDiv.getAttribute("items")
-console.log( JSON.parse(lists))
+// var lists = elmDiv.getAttribute("items")
+// console.log( lists)
 //lists.forEach(function( value ) {
 //    console.log( value );
 //});
