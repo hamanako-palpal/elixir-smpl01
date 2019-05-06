@@ -4489,9 +4489,10 @@ var author$project$Main$Model = F2(
 	function (datas, edit) {
 		return {datas: datas, edit: edit};
 	});
-var author$project$Main$Shop = function (shop) {
-	return {shop: shop};
-};
+var author$project$Main$Shop = F2(
+	function (shop, pref) {
+		return {pref: pref, shop: shop};
+	});
 var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
 var elm$core$Result$isOk = function (result) {
@@ -4975,7 +4976,7 @@ var author$project$Main$init = function (_n0) {
 			author$project$Main$Model,
 			_List_fromArray(
 				[
-					author$project$Main$Shop('ShowList')
+					A2(author$project$Main$Shop, 'ShowList', '___')
 				]),
 			''),
 		elm$core$Platform$Cmd$none);
@@ -4984,12 +4985,13 @@ var author$project$Main$NewShops = function (a) {
 	return {$: 'NewShops', a: a};
 };
 var elm$json$Json$Decode$field = _Json_decodeField;
-var elm$json$Json$Decode$map = _Json_map1;
+var elm$json$Json$Decode$map2 = _Json_map2;
 var elm$json$Json$Decode$string = _Json_decodeString;
-var author$project$Main$decoder = A2(
-	elm$json$Json$Decode$map,
+var author$project$Main$decoder = A3(
+	elm$json$Json$Decode$map2,
 	author$project$Main$Shop,
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string));
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'pref', elm$json$Json$Decode$string));
 var elm$json$Json$Decode$list = _Json_decodeList;
 var author$project$Main$decoders = elm$json$Json$Decode$list(author$project$Main$decoder);
 var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
@@ -5874,20 +5876,37 @@ var elm$http$Http$request = function (r) {
 		elm$http$Http$Request(
 			{allowCookiesFromOtherDomains: false, body: r.body, expect: r.expect, headers: r.headers, method: r.method, timeout: r.timeout, tracker: r.tracker, url: r.url}));
 };
-var author$project$Main$getShops = elm$http$Http$request(
-	{
-		body: elm$http$Http$emptyBody,
-		expect: A2(elm$http$Http$expectJson, author$project$Main$NewShops, author$project$Main$decoders),
-		headers: _List_fromArray(
-			[
-				A2(elm$http$Http$header, 'Accept', 'application/json'),
-				A2(elm$http$Http$header, 'Content-Type', 'application/json')
-			]),
-		method: 'GET',
-		timeout: elm$core$Maybe$Nothing,
-		tracker: elm$core$Maybe$Nothing,
-		url: 'http://localhost:4000/update'
-	});
+var author$project$Main$getShops = function (txt) {
+	return elm$http$Http$request(
+		{
+			body: elm$http$Http$emptyBody,
+			expect: A2(elm$http$Http$expectJson, author$project$Main$NewShops, author$project$Main$decoders),
+			headers: _List_fromArray(
+				[
+					A2(elm$http$Http$header, 'Accept', 'application/json'),
+					A2(elm$http$Http$header, 'Content-Type', 'application/json')
+				]),
+			method: 'GET',
+			timeout: elm$core$Maybe$Nothing,
+			tracker: elm$core$Maybe$Nothing,
+			url: 'http://localhost:4000/update/' + txt
+		});
+};
+var author$project$Main$httpErrorBodyToString = function (err) {
+	switch (err.$) {
+		case 'BadBody':
+			var s = err.a;
+			return 'BadBody: ' + s;
+		case 'BadUrl':
+			return 'BadUrl';
+		case 'Timeout':
+			return 'Timeout';
+		case 'NetworkError':
+			return 'NetworkError';
+		default:
+			return 'BadStatus';
+	}
+};
 var author$project$Main$httpErrorToString = function (err) {
 	switch (err.$) {
 		case 'BadUrl':
@@ -5907,7 +5926,9 @@ var author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 'GetShops':
-				return _Utils_Tuple2(model, author$project$Main$getShops);
+				return _Utils_Tuple2(
+					model,
+					author$project$Main$getShops(model.edit));
 			case 'NewShops':
 				var res = msg.a;
 				if (res.$ === 'Ok') {
@@ -5925,8 +5946,10 @@ var author$project$Main$update = F2(
 							{
 								datas: _List_fromArray(
 									[
-										author$project$Main$Shop(
-										author$project$Main$httpErrorToString(reason))
+										A2(
+										author$project$Main$Shop,
+										author$project$Main$httpErrorToString(reason),
+										author$project$Main$httpErrorBodyToString(reason))
 									])
 							}),
 						elm$core$Platform$Cmd$none);
@@ -5944,8 +5967,7 @@ var author$project$Main$Editor = function (a) {
 	return {$: 'Editor', a: a};
 };
 var author$project$Main$GetShops = {$: 'GetShops'};
-var elm$core$Debug$log = _Debug_log;
-var elm$json$Json$Decode$map2 = _Json_map2;
+var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$succeed = _Json_succeed;
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
@@ -5964,9 +5986,7 @@ var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var elm$html$Html$tr = _VirtualDom_node('tr');
 var author$project$Main$toLi = function (txt) {
-	return A4(
-		elm$core$Debug$log,
-		txt.shop,
+	return A2(
 		elm$html$Html$tr,
 		_List_Nil,
 		_List_fromArray(
@@ -5983,8 +6003,7 @@ var author$project$Main$toLi = function (txt) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						elm$html$Html$text(
-						elm$core$String$fromInt(100))
+						elm$html$Html$text(txt.pref)
 					]))
 			]));
 };
@@ -6022,14 +6041,14 @@ var author$project$Main$showList = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('colume')
+								elm$html$Html$text('StoreName')
 							])),
 						A2(
 						elm$html$Html$th,
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text(model.edit)
+								elm$html$Html$text('Pref')
 							]))
 					])),
 				A2(

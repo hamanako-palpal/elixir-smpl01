@@ -20,10 +20,11 @@ defmodule PhxSs.Router do
     get "/", PageController, :index
   end
 
-  scope "update", PhxSs do
+  scope "/", PhxSs do
     pipe_through :api # Use the default browser stack
 
-    get "/",  PageController, :update
+    get "/update",  PageController, :update
+    get "/update/:key",  PageController, :update
   end
 
   # Other scopes may use custom stacks.

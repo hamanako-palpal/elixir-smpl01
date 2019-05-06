@@ -5,6 +5,7 @@ import Html exposing(..)
 import Html.Events exposing(..)
 import Http
 import Json.Decode as Decode
+import Json.Encode as Encode
 import Dict
 
 main : Program () Model Msg
@@ -21,10 +22,12 @@ type alias Model =
   , edit : String
   }
 
-type alias Shop = {shop : String}
+type alias Shop = { shop : String
+                  , pref : String
+                  }
 
 init : () -> ( Model, Cmd Msg )
-init _ = (Model [Shop "ShowList"] "", Cmd.none)
+init _ = (Model [Shop "ShowList" "___"] "", Cmd.none)
 
 type Msg
   = Editor String
@@ -34,13 +37,13 @@ type Msg
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
       case msg of
-        GetShops -> (model, getShops)
+        GetShops -> (model, getShops(model.edit))
         NewShops res ->
           case res of
             Ok shops ->
               ({model | datas = shops}, Cmd.none)
             Err reason ->
-              ({model | datas = [Shop (httpErrorToString reason)]}, Cmd.none)
+              ({model | datas = [Shop (httpErrorToString reason)(httpErrorBodyToString reason)]}, Cmd.none)
         Editor txt -> ({model | edit = txt}, Cmd.none)
 
 subscriptions : Model -> Sub Msg
@@ -57,28 +60,27 @@ view mdl = div []
 showList : Model -> Html msg
 showList model = table []
                       [thead[]
-                        [th [][text "colume"]
-                        ,th [][text model.edit]
+                        [th [][text "StoreName"]
+                        ,th [][text "Pref"]
                         ]
                       ,tbody[] <| List.map toLi model.datas
                       ]
 
 toLi : Shop -> Html msg
-toLi txt = Debug.log txt.shop
-              tr []
-                [td [][text <| txt.shop]
-                ,td [][text <| String.fromInt 100]
-                ]
+toLi txt = tr []
+              [td [][text <| txt.shop]
+              ,td [][text <| txt.pref]
+              ]
 
-getShops : Cmd Msg
-getShops =
+getShops : String -> Cmd Msg
+getShops txt  =
     Http.request
       { method = "GET"
-        , headers =
+      , headers =
             [ Http.header "Accept" "application/json"
             , Http.header "Content-Type" "application/json"
             ]
-      , url = "http://localhost:4000/update"
+      , url = "http://localhost:4000/update/" ++ txt
       , expect = Http.expectJson NewShops(decoders)
       , body = Http.emptyBody
       , timeout = Nothing
@@ -91,7 +93,9 @@ decoders =
 
 decoder : Decode.Decoder (Shop)
 decoder =
-  Decode.map Shop(Decode.field "name" Decode.string)
+  Decode.map2 Shop
+      (Decode.field "name" Decode.string)
+      (Decode.field "pref" Decode.string)
 
 httpErrorToString : Http.Error -> String
 httpErrorToString err =
@@ -110,3 +114,21 @@ httpErrorToString err =
 
         Http.BadBody s ->
             "BadBody: " ++ s
+
+httpErrorBodyToString : Http.Error -> String
+httpErrorBodyToString err =
+    case err of
+        Http.BadBody s ->
+            "BadBody: " ++ s
+        
+        Http.BadUrl _ ->
+            "BadUrl"
+
+        Http.Timeout ->
+            "Timeout"
+
+        Http.NetworkError ->
+            "NetworkError"
+
+        Http.BadStatus _ ->
+            "BadStatus"
