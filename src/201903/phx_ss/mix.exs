@@ -41,7 +41,8 @@ defmodule PhxSs.Mixfile do
      {:cowboy, "~> 1.0"},
      {:httpoison, "~> 0.13"},
      {:exjsx, "~> 4.0.0"},
-     {:cors_plug, "~> 1.2"}
+     {:cors_plug, "~> 1.2"},
+     {:mecab, "~> 1.0" }
     ]
 
   end

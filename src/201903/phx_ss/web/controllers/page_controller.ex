@@ -3,12 +3,15 @@ defmodule PhxSs.PageController do
 
   def index(conn, _params) do
 
-    items = Grnavi.Access.makeText
-      |> JSX.encode
-      |> Grnavi.Access.getDecodes
+    items = Grnavi.Splitter.splitter
+      |> getText([])
 
     render conn, "index.html", items: items
   end
+
+  def getText([], list) do list end
+
+  def getText([ %{ "surface_form" => word } | tail ], words )do getText(tail, words ++ [ word ] )end
 
   def updateman(conn, _params) do
 

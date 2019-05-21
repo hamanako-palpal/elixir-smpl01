@@ -4,6 +4,7 @@ import Browser
 import Html exposing(..)
 import Html.Events exposing(..)
 import Http
+import Url.Builder
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Dict
@@ -18,8 +19,13 @@ main =
      }
 
 type alias Model = 
-  {datas : List Shop
+  { datas : List Shop
   , edit : String
+  }
+
+type alias Post =
+  {
+    key : String
   }
 
 type alias Shop = { shop : String
