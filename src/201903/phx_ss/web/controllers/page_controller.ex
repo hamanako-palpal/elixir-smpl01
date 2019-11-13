@@ -15,7 +15,7 @@ defmodule PhxSs.PageController do
 
   def updateman(conn, _params) do
 
-    items = Grnavi.Access.makeText("ロシア")
+    items = Grnavi.Access.makeText("")
 
     json conn, items
   end
