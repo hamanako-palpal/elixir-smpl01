@@ -3,7 +3,7 @@ defmodule PhxSs.PageController do
 
   def index(conn, _params) do
 
-    items = Grnavi.Splitter.splitter
+    items = Grnavi.Splitter.makeText
       |> getText([])
 
     render conn, "index.html", items: items
