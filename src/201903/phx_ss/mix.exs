@@ -19,7 +19,7 @@ defmodule PhxSs.Mixfile do
   def application do
     [mod: {PhxSs, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :httpoison]]
+                    :phoenix_ecto, :postgrex, :httpoison, :mongodb_ecto, :ecto, :logger]]
   end
 
   # Specifies which paths to compile per environment.
@@ -30,7 +30,7 @@ defmodule PhxSs.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:ecto, "~> 2.0"},
+    [{:ecto, "~> 1.0"},
      {:phoenix, "~> 1.2.5"},
      {:phoenix_pubsub, "~> 1.0"},
      {:phoenix_ecto, "~> 3.0"},
@@ -42,7 +42,9 @@ defmodule PhxSs.Mixfile do
      {:httpoison, "~> 0.13"},
      {:exjsx, "~> 4.0.0"},
      {:cors_plug, "~> 1.2"},
-     {:mecab, "~> 1.0" }
+     {:mongodb_ecto, "~> 0.1"},
+     {:mongodb, ">= 0.4.3"},
+     {:poolboy, ">= 1.5.1"}
     ]
 
   end
@@ -55,7 +57,7 @@ defmodule PhxSs.Mixfile do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
-     "ecto.reset": ["ecto.drop", "ecto.setup"],
-     "test": ["ecto.create --quiet", "ecto.migrate", "test"]]
+     "ecto.reset": ["ecto.drop", "ecto.setup"],]
+    #  "test": ["ecto.create --quiet", "ecto.migrate", "test"]]
   end
 end

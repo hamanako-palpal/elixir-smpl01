@@ -3,7 +3,10 @@ defmodule Grnavi.Access do
   def accesser(key) do
 
     url = "https://api.gnavi.co.jp/RestSearchAPI/v3/"
-    prm = [keyid: "f6313561ae7bbcbd7c8c3df035c4317b", freeword: "インドカレー" <>" "<> key, hit_per_page: "15"]
+    prm = [keyid: "6e17ab013585e3e4682dc8566d4f408b",
+        freeword: "インドカレー" <>","<> key,
+        hit_per_page: "15"]
+
     HTTPoison.get!(url, [], params: prm)
   end
 
@@ -13,18 +16,15 @@ defmodule Grnavi.Access do
     |> getBody
     |> Poison.decode!
     |> getRes
-    |> getText
   end
 
   def getBody(%{body: bd}) do bd end
 
-  def getRes(%{"rest" => res}) do res end
+  def getRes(%{"rest" => res}) do res |> getText end
 
-  def getRes(%{"error" => %{"message" => msg}}) do msg end
+  def getRes(%{"error" => [%{"message" => msg} | _]}) do msg end
 
   def getCate(%{"rest" => x}) do x end
-
-  # def getText(msg) do [msg] end
 
   def getText(maps) do getText(maps, []) end
 
@@ -33,11 +33,10 @@ defmodule Grnavi.Access do
   def getText([head | tail], list) do
 
     # 変数の取得
-    %{"name" => nm, "code" => cds} = head
-    %{"prefname" => prfnm, "prefcode" => prfcd} = cds
+    %{"id" => json_id, "name" => json_name} = head
 
     # キーワードリストに格納
-    ret = [%{name: nm, pref: prfnm, pcode: Util.Util.convStr2Int(prfcd)}] ++ list
+    ret = [%{id: json_id, name: json_name}] ++ list
     getText(tail, ret)
   end
 

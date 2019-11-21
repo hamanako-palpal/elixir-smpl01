@@ -35,9 +35,13 @@ config :phoenix, :stacktrace_depth, 20
 
 # Configure your database
 config :phx_ss, PhxSs.Repo,
-  adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
+  # adapter: Ecto.Adapters.Postgres,
+  adapter: Mongo.Ecto,
+  # username: "postgres",
+  username: "haruhito0823",
   password: "haruhito0823",
-  database: "phx",
-  hostname: "localhost",
+  # database: "phx",
+  database: "smpl",
+  # hostname: "localhost",
+  hostname: "smplcluster-xfhz0.gcp.mongodb.net",
   pool_size: 10
