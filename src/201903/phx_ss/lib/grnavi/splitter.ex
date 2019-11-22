@@ -14,7 +14,9 @@ defmodule Grnavi.Splitter do
       HTTPoison.post(url,body,headers,[])
       |> getBody
       |> Poison.decode!
-      |> requestCheck
+      # |> requestCheck
+      # |> Enum.count
+      # |> Enum.each fn(i) -> i<>","end
 
     end
 

@@ -9,7 +9,8 @@ defmodule PhxSs do
     # Define workers and child supervisors to be supervised
     children = [
       # Start the Ecto repository
-      supervisor(PhxSs.Repo, []),
+      # supervisor(PhxSs.Repo, []),
+      supervisor(Repo, []),
       # Start the endpoint when the application starts
       supervisor(PhxSs.Endpoint, []),
       # Start your own worker by calling: PhxSs.Worker.start_link(arg1, arg2, arg3)
