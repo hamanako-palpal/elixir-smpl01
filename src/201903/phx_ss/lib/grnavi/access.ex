@@ -1,5 +1,13 @@
 defmodule Grnavi.Access do
 
+  def makeText(key) do
+
+    accesser(key)
+    |> getBody
+    |> Poison.decode!
+    |> getRes
+  end
+
   def accesser(key) do
 
     url = "https://api.gnavi.co.jp/RestSearchAPI/v3/"
@@ -10,21 +18,11 @@ defmodule Grnavi.Access do
     HTTPoison.get!(url, [], params: prm)
   end
 
-  def makeText(key) do
-
-    accesser(key)
-    |> getBody
-    |> Poison.decode!
-    |> getRes
-  end
-
   def getBody(%{body: bd}) do bd end
 
   def getRes(%{"rest" => res}) do res |> getText end
 
   def getRes(%{"error" => [%{"message" => msg} | _]}) do msg end
-
-  def getCate(%{"rest" => x}) do x end
 
   def getText(maps) do getText(maps, []) end
 
