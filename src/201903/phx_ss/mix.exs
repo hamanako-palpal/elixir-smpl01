@@ -30,8 +30,7 @@ defmodule PhxSs.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:ecto, "~> 1.0"},
-     {:phoenix, "~> 1.2.5"},
+    [{:phoenix, "~> 1.2.5"},
      {:phoenix_pubsub, "~> 1.0"},
      {:phoenix_ecto, "~> 3.0"},
      {:postgrex, ">= 0.0.0"},
@@ -40,11 +39,8 @@ defmodule PhxSs.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:httpoison, "~> 0.13"},
-     {:exjsx, "~> 4.0.0"},
      {:cors_plug, "~> 1.2"},
-     {:mongodb_ecto, "~> 0.1"},
-     {:mongodb, ">= 0.4.3"},
-     {:poolboy, ">= 1.5.1"}
+     {:mongo, "~> 0.5.1"}
     ]
 
   end
